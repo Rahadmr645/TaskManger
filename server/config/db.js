@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 
-const URL = 'mongodb+srv://rahadmr645:12345678@cluster0.8cjdk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+const URL = 'mongodb+srv://rahadmr645:87654321@cluster0.ypmtj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
 const connectToMongoDb = async () => {
     try {
         await mongoose.connect(URL,{})
