@@ -1,65 +1,51 @@
-import React, { useState } from 'react'
-import styles from './login.module.css';
+import React, { useState } from "react";
+import styles from "./login.module.css";
+import axios from "axios";
+import { Context } from '../context/StoreContext'
+
 const Login = () => {
-  const [currentState, setCurrentState] = useState('Sign Up');
-  const [showlogin, setShowlogin] = useState(true);
   
-  const [formData,setFormData] = useState({
-    name:'',
-    email:'',
-    password:'',
-  });
-
-  const handleChange = (e) => {
-    const {name,value,type} = e.target;
-
-    setFormData({
-     ...formData,
-    })
-
-  }
-
-  const hadnleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
-  };
-
+  const {
+    currentState,
+    formData,
+    handleChange,
+    handleSubmit,
+  } = useContext(Context);
 
   return (
     <div className={styles.logincontainer}>
-      <form onSubmit={hadnleSubmit} className={styles.loginform}>
+      <form onSubmit={handleSubmit} className={styles.loginform}>
         <div className={styles.logintitle}>
           <h1>{currentState}</h1>
-          <img onClick={() => setShowlogin(false)} src="/assets/cross_icon.png"  alt="" />
+          <img onClick={() => setShowlogin(false)} src="/assets/cross_icon.png" alt="" />
         </div>
         <div className={styles.logininput}>
-          {
-            currentState === 'Sign Up' ?
-              <input name='name' onChange={handleChange} value={formData.email}   type="text" placeholder='Enter your name' />
-              : <></>
-          }
-          <input name='email' onChange={handleChange} value={formData.email} type="email"placeholder='Enter your email' />
-          <input onChange={handleChange} value={formData.password}  name='password'  type="password" placeholder='Enter password' />
+          {currentState === "Sign Up" && (
+            <input name="name" onChange={handleChange} value={formData.name} type="text" placeholder="Enter your name" />
+          )}
+          <input name="email" onChange={handleChange} value={formData.email} type="email" placeholder="Enter your email" />
+          <input name="password" onChange={handleChange} value={formData.password} type="password" placeholder="Enter password" />
         </div>
         <div className={styles.btnstate}>
-          <button type='submit' >{currentState}</button>
+          <button type="submit">{currentState}</button>
         </div>
 
         <div className={styles.logininfo}>
           <div className={styles.check}>
-            <label htmlFor='chackbox'>Agree with us </label>
-            <input id='chackbox' type="checkbox" />
+            <label htmlFor="checkbox">Agree with us </label>
+            <input id="checkbox" type="checkbox" />
           </div>
           <div className={styles.info}>
-            {currentState === 'Sign Up' ?
-              <p>Alrady have a account <span onClick={() => setCurrentState('Login')} >click here</span></p>
-              : <p>Don't have a account <span onClick={() => setCurrentState('Sign Up')} >click here</span></p>
-            }
+            {currentState === "Sign Up" ? (
+              <p>Already have an account? <span onClick={() => setCurrentState("Login")}>Click here</span></p>
+            ) : (
+              <p>Don't have an account? <span onClick={() => setCurrentState("Sign Up")}>Click here</span></p>
+            )}
           </div>
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
