@@ -1,13 +1,14 @@
 import react,{useContext} from 'react';
 import styles from './DeshBord.module.css'
 import {Context} from '../context/StoreContext.jsx'
+import AddTask from '../addTask/AddTask.jsx';
 const DeshBord = () => {
   
-  const {value} = useContext(Context);
+  const {user} = useContext(Context);
   return (
     <div>
-      This is Desh DeshBord
-      <p>{value}</p>
+    <p>Well Come Dear {user.name}</p>
+    <AddTask/>
     </div>
     )
 } 

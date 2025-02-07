@@ -5,7 +5,10 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 // 01 : create user
 
+const SECRETE_KEY = 'RAHADLKASLFJSLKFJASFKSJFLKSJFSA43534LJLKSJ';
+
 router.post('/create', async (req, res) => {
+
 
     try {
 
@@ -30,7 +33,10 @@ router.post('/create', async (req, res) => {
         const newUser = new User({ name, email, password: hassPass });
         await newUser.save();
 
-        res.status(200).json({ success: true, message: "User create successfully", user: newUser });
+
+        // sign with jwt token
+        const token = jwt.sign({ id :newUser._id, name: newUser.name, email:newUser.email},SECRETE_KEY,{ expiresIn : '1h'})
+        res.status(200).json({ success: true, message: "User create successfully", user:{ name:newUser.name, email: newUser.email},token});
 
     } catch (error) {
         res.status(400).json({ success: false, message: "User create Faild", });
@@ -63,10 +69,10 @@ router.post('/login', async (req, res) => {
         const comparePass = await bcrypt.compare(password, existUser.password);
         if (!comparePass) return res.status(400).json({ success: false, message: "UnAuthorised cradintial" });
 
-        res.status(200).json({ success: true, message: `WellCome Dear ${existUser.name}` });
+        res.status(200).json({ success: true, message: `WellCome Dear ${existUser.name}`, user: { name: existUser.name, email: existUser.email } });
 
     } catch (error) {
-        res.status(400).json({ success: false, message: "Login faild", });
+        res.status(400).json({ success: false, message: "Login faild"});
         console.error(error);
     }
 
@@ -79,8 +85,8 @@ router.post('/delete', async (req, res) => {
 
         // import in body 
         const { id } = req.body;
-       
-        const deleteUser = await User.findByIdAndDelete( id );
+
+        const deleteUser = await User.findByIdAndDelete(id);
         res.status(200).json({ success: true, message: `  Dear ${deleteUser.name} your account Deleted Successfully` });
     } catch (error) {
         res.status(400).json({ success: false, message: " Faild to delete", });

@@ -1,0 +1,11 @@
+
+.taskContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.taskForm{
+    width: 80%;
+    border: 1px solid green;
+    height: 80vh
+}

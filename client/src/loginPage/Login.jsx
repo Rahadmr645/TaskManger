@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import styles from "./login.module.css";
-import axios from "axios";
+
 import { Context } from '../context/StoreContext'
 
 const Login = () => {
-  
+
   const {
     currentState,
     formData,
     handleChange,
     handleSubmit,
+    setCurrentState,
   } = useContext(Context);
 
   return (

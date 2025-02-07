@@ -1,16 +1,19 @@
-import react, {createContext,useState,useEffect} from 'react';
-import { useNavigate } from "react-router-dom"; 
+import react, { createContext, useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 export const Context = createContext();
 
-export const ContextProvider = ({children}) => {
-  
-const [currentState, setCurrentState] = useState("Sign Up");
+export const ContextProvider = ({ children }) => {
+
+  const [currentState, setCurrentState] = useState("Sign Up");
   const [showlogin, setShowlogin] = useState(true);
+  const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
+
 
   const navigate = useNavigate(); // Initialize useNavigate hook
 
@@ -52,6 +55,9 @@ const [currentState, setCurrentState] = useState("Sign Up");
         password: "",
       });
 
+      setUser(response.data.user);
+      localStorage.setItem("User",JSON.stringify(response.data.user));
+
       // Navigate to dashboard after successful login/signup
       navigate("/deshbord"); // Ensure your path is correct
 
@@ -61,24 +67,26 @@ const [currentState, setCurrentState] = useState("Sign Up");
     }
   };
 
-const toggleState = () => {
+  const toggleState = () => {
     setCurrentState(currentState === "Sign Up" ? "Login" : "Sign Up");
   };
 
   const contextValue = {
     currentState,
+    setCurrentState,
     formData,
     handleChange,
     handleSubmit,
     toggleState,
+    user,
   }
-  
-  return(
-       <Context.Provider value={{contextValue}}>
-         
-         {children}
-         
-       </Context.Provider>
-    )
- 
+
+  return (
+    <Context.Provider value={contextValue}>
+
+      {children}
+
+    </Context.Provider>
+  )
+
 }

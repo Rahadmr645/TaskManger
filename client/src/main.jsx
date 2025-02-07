@@ -6,7 +6,7 @@ import App from './App.jsx'
 import {BrowserRouter } from 'react-router-dom'
  eruda.init();
  
- import {ContextProvider} from "./context/StoreContext"
+ import { ContextProvider } from './context/StoreContext.jsx';
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
   <StrictMode>
