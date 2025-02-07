@@ -1,11 +1,38 @@
 
 .taskContainer{
     display: flex;
+    
     justify-content: center;
     align-items: center;
 }
 .taskForm{
     width: 80%;
-    border: 1px solid green;
-    height: 80vh
+    
+    height: 80vh;
+    display: flex; 
+    flex-direction: column;
+}
+
+@media (max-width: 475px) {
+  .taskForm{
+    width: 80%;
+    height: 80vh;
+    gap: 20px;
+    display: flex; 
+    flex-direction: column;
+}
+.taskForm div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.taskForm div input,textarea,select{
+  border: none; 
+  padding: 5px;
+  border-radius: 5px;
+  width: 250px;
+}
+ .taskForm div textarea {
+  rows:10;
+}
 }
