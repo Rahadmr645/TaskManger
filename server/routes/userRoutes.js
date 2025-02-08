@@ -1,100 +1,108 @@
 import express from 'express'
 import User from '../models/userModels.js';
-const router = express.Router();
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-// 01 : create user
 
-const SECRETE_KEY = 'RAHADLKASLFJSLKFJASFKSJFLKSJFSA43534LJLKSJ';
+const router = express.Router();
+const SECRET_KEY = 'RAHADLKASLFJSLKFJASFKSJFLKSJFSA43534LJLKSJ'; // Fix name
 
+// 01 : Create User (Signup)
 router.post('/create', async (req, res) => {
-
-
     try {
-
-        // import in body 
         const { name, email, password } = req.body;
 
-
-        // check input is filled or not 
         if (!name || !email || !password) {
             return res.status(400).json({ success: false, message: "Fill all the input" });
         }
 
-        // chack is email is exist or not 
-        const existUser = await User.findOne({ email })
-        if (existUser) return res.status(400).json({ success: false, message: "User is already exist" });
+        const existUser = await User.findOne({ email });
+        if (existUser) return res.status(400).json({ success: false, message: "User already exists" });
 
-        // make password hassing
         const salt = await bcrypt.genSalt(10);
-        const hassPass = await bcrypt.hash(password, salt);
+        const hashedPass = await bcrypt.hash(password, salt);
 
-
-        const newUser = new User({ name, email, password: hassPass });
+        const newUser = new User({ name, email, password: hashedPass });
         await newUser.save();
 
+        // Generate JWT Token
+        const token = jwt.sign({ id: newUser._id, name: newUser.name, email: newUser.email }, SECRET_KEY, { expiresIn: '1h' });
 
-        // sign with jwt token
-        const token = jwt.sign({ id :newUser._id, name: newUser.name, email:newUser.email},SECRETE_KEY,{ expiresIn : '1h'})
-        res.status(200).json({ success: true, message: "User create successfully", user:{ name:newUser.name, email: newUser.email},token});
+        res.status(200).json({ success: true, message: "User created successfully", user: { name: newUser.name, email: newUser.email }, token });
 
     } catch (error) {
-        res.status(400).json({ success: false, message: "User create Faild", });
+        res.status(500).json({ success: false, message: "User creation failed" });
         console.error(error);
     }
+});
 
-})
-
-
-// 02 : login user 
-
+// 02 : Login User
 router.post('/login', async (req, res) => {
-
     try {
-
-        // import in body 
         const { email, password } = req.body;
 
-
-        // check input is filled or not 
         if (!email || !password) {
             return res.status(400).json({ success: false, message: "Fill all the input" });
         }
 
-        // chack is email is exist or not 
-        const existUser = await User.findOne({ email })
-        if (!existUser) return res.status(400).json({ success: false, message: "UnAuthorised cradintial" });
+        const existUser = await User.findOne({ email });
+        if (!existUser) return res.status(400).json({ success: false, message: "Unauthorized credentials" });
 
-        // compare hashing password
         const comparePass = await bcrypt.compare(password, existUser.password);
-        if (!comparePass) return res.status(400).json({ success: false, message: "UnAuthorised cradintial" });
+        if (!comparePass) return res.status(400).json({ success: false, message: "Unauthorized credentials" });
 
-        res.status(200).json({ success: true, message: `WellCome Dear ${existUser.name}`, user: { name: existUser.name, email: existUser.email } });
+        // Generate JWT Token
+        const token = jwt.sign({ id: existUser._id, name: existUser.name, email: existUser.email }, SECRET_KEY, { expiresIn: '1h' });
+
+        res.status(200).json({ success: true, message: `Welcome ${existUser.name}`, user: { name: existUser.name, email: existUser.email }, token });
 
     } catch (error) {
-        res.status(400).json({ success: false, message: "Login faild"});
+        res.status(500).json({ success: false, message: "Login failed" });
         console.error(error);
     }
+});
 
-})
+// 03 : Verify Token (Auto Login)
+router.get("/verify-token", async (req, res) => {
+    try {
+        let token = req.headers["authorization"];
 
-// 03 : Delete users
+        if (!token) {
+            return res.status(401).json({ success: false, message: "No token provided" });
+        }
 
+        // Remove 'Bearer ' if it exists
+        if (token.startsWith("Bearer ")) {
+            token = token.slice(7, token.length);
+        }
+
+        const decoded = jwt.verify(token, SECRET_KEY);
+        const user = await User.findById(decoded.id).select("-password");
+
+        if (!user) return res.status(401).json({ success: false, message: "Invalid token" });
+
+        res.status(200).json({ success: true, user });
+
+    } catch (error) {
+        res.status(401).json({ success: false, message: "Invalid or expired token" });
+    }
+});
+
+// 04 : Delete User
 router.post('/delete', async (req, res) => {
     try {
-
-        // import in body 
         const { id } = req.body;
 
         const deleteUser = await User.findByIdAndDelete(id);
-        res.status(200).json({ success: true, message: `  Dear ${deleteUser.name} your account Deleted Successfully` });
+        if (!deleteUser) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        res.status(200).json({ success: true, message: `Dear ${deleteUser.name}, your account was deleted successfully` });
+
     } catch (error) {
-        res.status(400).json({ success: false, message: " Faild to delete", });
+        res.status(500).json({ success: false, message: "Failed to delete user" });
         console.error(error);
     }
-
-})
-
-
+});
 
 export default router;
