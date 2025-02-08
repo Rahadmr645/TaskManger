@@ -4,7 +4,7 @@ import axios from 'axios';
 export const Context = createContext();
 
 export const ContextProvider = ({ children }) => {
-
+ const [showTaskForm, setShowTaskForm] = useState(false);
   const [currentState, setCurrentState] = useState("Sign Up");
   const [showlogin, setShowlogin] = useState(true);
   const [user, setUser] = useState(null);
@@ -25,6 +25,27 @@ export const ContextProvider = ({ children }) => {
     }));
   };
 
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+      });
+    }
+  }, [user]);
+
+  useEffect(() => {
+    localStorage.removeItem("User"); // Clears stored user data
+  }, []);
+    // Reset form when app loads or when user logs out
+    useEffect(() => {
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+      });
+    }, []);
   const handleSubmit = async (e) => {
     e.preventDefault(); // Stop the page from refreshing!
 
@@ -59,7 +80,7 @@ export const ContextProvider = ({ children }) => {
       localStorage.setItem("User",JSON.stringify(response.data.user));
 
       // Navigate to dashboard after successful login/signup
-      navigate("/deshbord"); // Ensure your path is correct
+      navigate("/dashbord"); // Ensure your path is correct
 
     } catch (err) {
       console.error("Error:", err.response?.data?.message || err.message);
@@ -79,6 +100,8 @@ export const ContextProvider = ({ children }) => {
     handleSubmit,
     toggleState,
     user,
+    showTaskForm,
+    setShowTaskForm,
   }
 
   return (

@@ -1,38 +1,90 @@
-
-.taskContainer{
-    display: flex;
-    
-    justify-content: center;
-    align-items: center;
+.taskContainer {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid green;
+  position: absolute;
+  top: 0px;
+  backdrop-filter: blur(1px); 
+  background: rgba(0, 0, 0, 0.1); 
 }
-.taskForm{
-    width: 80%;
-    
-    height: 80vh;
-    display: flex; 
-    flex-direction: column;
-}
-
-@media (max-width: 475px) {
-  .taskForm{
-    width: 80%;
-    height: 80vh;
-    gap: 20px;
-    display: flex; 
-    flex-direction: column;
-}
-.taskForm div {
+.taskForm {
+  width: 80%;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 20px;
+  background: linear-gradient(to right, green,blue);
+  padding: 25px;
+  border-radius: 10px;
 }
-.taskForm div input,textarea,select{
-  border: none; 
-  padding: 5px;
+
+/* Heading and HR */
+.taskForm hr,
+.taskForm h1 {
+  width: 100%;
+  text-align: center;
+  margin: 0;
+}
+
+/* Two-column layout */
+.formGrid {
+  display: flex;
+  gap: 50px; /* More balanced spacing */
+  justify-content: space-between;
+  align-items: flex-start; /* Ensures both columns align from the top */
+}
+
+/* Individual column */
+.column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 15px;
+}
+
+/* Form input styling */
+.taskForm input,
+.taskForm textarea,
+.taskForm select {
+  border: 1px solid #ccc;
+  padding: 8px;
   border-radius: 5px;
-  width: 250px;
+  width: 100%;
+  margin-top: 5px;
+  font-size: 16px;
 }
- .taskForm div textarea {
-  rows:10;
+
+/* Button styles */
+.taskForm button {
+  background-color: rgb(75, 58, 58);
+  color: white;
+  transition: 0.3s;
+  padding: 10px;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
 }
+
+.taskForm button:hover {
+  color: green;
+  transform: scale(1.02);
+}
+
+/* Responsive styles for mobile */
+@media (max-width: 768px) {
+  .formGrid {
+    flex-direction: column; /* Stack elements on smaller screens */
+    gap: 20px;
+  }
+
+  .taskForm {
+    width: 90%;
+  }
 }

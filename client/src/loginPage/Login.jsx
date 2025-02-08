@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import styles from "./login.module.css";
 
 import { Context } from '../context/StoreContext'
@@ -22,7 +22,7 @@ const Login = () => {
         </div>
         <div className={styles.logininput}>
           {currentState === "Sign Up" && (
-            <input name="name" onChange={handleChange} value={formData.name} type="text" placeholder="Enter your name" />
+            <input name="name" onChange={handleChange} value={formData.name} type="text" placeholder="Enter your name" autoComplete="off" />
           )}
           <input name="email" onChange={handleChange} value={formData.email} type="email" placeholder="Enter your email" />
           <input name="password" onChange={handleChange} value={formData.password} type="password" placeholder="Enter password" />
