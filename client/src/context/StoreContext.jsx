@@ -7,15 +7,22 @@ export const Context = createContext();
 export const ContextProvider = ({ children }) => {
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [currentState, setCurrentState] = useState("Sign Up");
-  const [showlogin, setShowlogin] = useState(true);
+  const [refrash, setRefrash] = useState(false);
   const [user, setUser] = useState(null);
+  const navigate = useNavigate(); // Initialize useNavigate hook
+  const [notes, setNotes] = useState([]);
+
+ 
+  // const triggerRefrash = () => setRefrash((prev) => prev);
+
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
 
-  const navigate = useNavigate(); // Initialize useNavigate hook
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,10 +98,9 @@ export const ContextProvider = ({ children }) => {
       setUser(response.data.user);
       localStorage.setItem("user", JSON.stringify(response.data.user));
       localStorage.setItem("token", response.data.token);
-
-      // Navigate to dashboard after successful login/signup
+            // Navigate to dashboard after successful login/signup
       navigate("/dashbord");
-
+     
     } catch (err) {
       console.error("Error:", err.response?.data?.message || err.message);
       alert("Error: " + (err.response?.data?.message || "Something went wrong"));
@@ -106,7 +112,7 @@ export const ContextProvider = ({ children }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
-    navigate("/login"); // Redirect to login page
+    navigate("/"); // Redirect to login page
   };
 
   // 🔹 Toggle between Login and Sign Up
@@ -114,6 +120,125 @@ export const ContextProvider = ({ children }) => {
     setCurrentState(currentState === "Sign Up" ? "Login" : "Sign Up");
   };
 
+
+  // create notes 
+
+  //state to store the input values from the form 
+  const [taskData, setTaskData] = useState({
+    project: 'Important',
+    task: '',
+    taskDisc: '',
+    dueDate: '',
+    document: '',
+  });
+
+  const notesHandleChange = (e) => {
+    const { name, value } = e.target;
+
+    setTaskData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // handle notes 
+  const handleNotes = async (e) => {
+    e.preventDefault();
+
+    // chekc if usr is logged in
+    const userId = JSON.parse(localStorage.getItem("user"))?._id;
+    if (!userId) {
+      alert("User not found.please log in");
+      return;
+    }
+
+    //chack fill are complete
+    if (!taskData.task || !taskData.taskDisc || !taskData.dueDate
+    ) return alert("plese fill all the importants field");
+
+    let response;
+
+    // conect with yourmongodb
+    try {
+      response = await axios.post("http://localhost:8001/api/notes/create/", { ...taskData, userId },
+        { headers: { "Content-Type": "application/json" } }
+      );
+      console.log("response", response.data);
+      alert(response.data.message);
+      setNotes((prevNotes) => [...prevNotes, response.data]);
+    } catch (error) {
+      console.log(error);
+    }
+
+    if (!response) {
+      return;
+    }
+
+    setShowTaskForm(false);
+    setTaskData({
+      project: 'Important',
+      task: '',
+      taskDisc: '',
+      dueDate: '',
+      document: null,
+    })
+  }
+
+
+  const fetchAllNotes = async () => {
+    const userId = JSON.parse(localStorage.getItem('user'))?._id;
+    if (!userId) {
+      alert('User not found. Please log in');
+      return [];
+    }
+    try {
+      const response = await axios.get(`http://localhost:8001/api/notes/${userId}`);
+      console.log("Fetched Notes:", JSON.stringify(response.data.notes, null, 2));
+       return response.data.notes || []; // Return the notes array
+    } catch (error) {
+      console.log(error);
+      alert(error.response?.data?.message || 'Error fetching notes');
+      return []; // Return an empty array if an error occurs
+    }
+  };
+  useEffect(() => {
+    fetchAllNotes();
+  }, []);
+
+
+
+
+  // for deleting notes 
+  const handleDelete = async (noteId) => {
+
+    // get user 
+    const user = JSON.parse(localStorage.getItem('user'));
+    if(!user) {
+      alert('You must be logged in to delte note');
+      return;
+    };
+
+    const userId = user._id;
+
+    try {
+      const response = await axios.delete(`http://localhost:8001/api/notes/delete/${noteId}`,
+       {data: {userId},
+      });
+    
+
+      if(response.data.success){
+        alert("Note deleted successFully");
+        setNotes((prevNotes) => prevNotes.filter((note) => note._id !== noteId));
+      } else{
+        alert(response.data.message);
+      }
+    } catch (error) {
+      console.error('error deleting note:',error);
+      alert("error deleting note");
+    }
+
+
+  }
   // Provide context value
   const contextValue = {
     currentState,
@@ -125,6 +250,15 @@ export const ContextProvider = ({ children }) => {
     user,
     showTaskForm,
     setShowTaskForm,
+    taskData,
+    setTaskData,
+    notesHandleChange,
+    handleNotes,
+    fetchAllNotes,
+    notes,
+    setNotes,
+    handleDelete,
+    handleLogout,
   };
 
   return (
@@ -133,3 +267,5 @@ export const ContextProvider = ({ children }) => {
     </Context.Provider>
   );
 };
+
+

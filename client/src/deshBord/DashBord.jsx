@@ -2,9 +2,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import styles from './DashBord.module.css';
 import { Context } from '../context/StoreContext.jsx';
 import AddTask from '../addTask/AddTask.jsx';
+import TaskList from '../taskList/TaskList.jsx';
 
 const DashBord = () => {
-  const { user, setShowTaskForm, showTaskForm } = useContext(Context);
+  const {handleLogout, user, setShowTaskForm, showTaskForm } = useContext(Context);
 
   // Stop scrolling when the task form is shown
   useEffect(() => {
@@ -22,8 +23,11 @@ const DashBord = () => {
   return (
     <div className={styles.dashBordContainer}>
       <p>Welcome, {user.name}</p> {/* Display user name if user exists */}
-      <button onClick={() => setShowTaskForm(true)}>Add Task</button>
-      <button onClick={() => setShowTaskForm(false)}>x</button>
+      <div className={styles.btnSection}>
+        <button className={styles.btnAdd} onClick={() => setShowTaskForm(true)}>Add Task</button>
+        <button onClick={() => handleLogout()} className={styles.btnLog}  >LogOut</button>
+      </div>
+      <TaskList />
       {showTaskForm && <AddTask />}
     </div>
   );

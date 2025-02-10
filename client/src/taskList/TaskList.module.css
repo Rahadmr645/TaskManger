@@ -1,0 +1,41 @@
+.container{
+    width: 100%;
+    height: auto;
+}
+.container > h1 {
+    margin-left: 30px;
+}
+.listContainer{
+    display: grid;
+    height: auto;
+    grid-template-columns: repeat(3,1fr);
+    column-gap: 10px;
+    row-gap: 10px;
+    padding: 30px;
+}
+.taskItem{
+    padding: 5px;
+    background:linear-gradient(to right,green,blue);
+    border-radius: 5px;
+}
+.btnSection{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.btnSection button {
+    background: transparent;
+    border: none;
+}
+.deletIcon,.editIcon{
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    color: white;
+   transition: .5s;
+}
+.deletIcon:hover,.editIcon:hover{
+    color: red;
+    transform: scale(1.1);
+
+}

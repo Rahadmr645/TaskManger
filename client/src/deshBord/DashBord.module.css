@@ -2,6 +2,27 @@
     position: relative;
     width: 100%;
     height: 100vh;
-    border: 1px solid red;
-   
+}
+
+.btnSection{
+    display: flex;
+    width: 100%;
+    justify-content: right;
+    gap: 10px;
+    
+}
+.btnAdd,.btnLog {
+    width: 100px;
+    height: 30px;
+    border: 1px solid white;
+    background: transparent;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 40px;
+    transition: .5s ;
+}
+.btnAdd:hover,.btnLog:hover{
+    background: linear-gradient(to right,green,blue);
+    color: white;
+    transform: scale(1.1);
 }

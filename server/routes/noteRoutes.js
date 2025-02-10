@@ -3,11 +3,11 @@ import Notes from "../models/noteModels.js";
 
 const router = express.Router();
 
-// ✅ Create a new note (User ID comes from frontend)
+//  Create a new note (User ID comes from frontend)
 router.post("/create", async (req, res) => {
   try {
-    const { userId, project, task, taskDisc, dueDate, document } = req.body;
-    
+    const {userId, project, task, taskDisc, dueDate, document } = req.body;
+
     if (!userId || !project || !task || !taskDisc || !dueDate) {
       return res.status(400).json({ success: false, message: "All fields are required!" });
     }
@@ -33,7 +33,7 @@ router.get("/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
     const notes = await Notes.find({ userId });
-    res.json({ success: true, notes });
+    res.json({ success: true,message:"Nots fetch Succeefullly",notes: notes });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
