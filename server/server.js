@@ -8,13 +8,7 @@ const app = express();
 const PORT = 8001;
 
 app.use(express.json());
-app.use(cors(
-    {
-        origin: ["https://task-manger-theta.vercel.app"],
-        methods: ["POST","GET"],
-        credentials: true
-    }
-));
+app.use(cors());
 connectToMongoDb();
 
 // routes section
